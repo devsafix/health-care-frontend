@@ -38,32 +38,43 @@ const doctors = [
 
 const DoctorCard = ({ doctor }: { doctor: (typeof doctors)[0] }) => {
   return (
-    <Card className="text-center overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-blue-50/50 items-center p-6">
-        <Image
-          src={doctor.image}
-          alt={doctor.name}
-          width={96}
-          height={96}
-          className="rounded-full border-4 border-white shadow-md"
-        />
+    <Card className="overflow-hidden border border-border/60 pt-0 rounded-2xl bg-white shadow-sm hover:shadow-lg transition-all duration-300">
+      <CardHeader className="flex flex-col items-center p-6 bg-muted/50">
+        <div className="relative w-24 h-24">
+          <Image
+            src={doctor.image}
+            alt={doctor.name}
+            fill
+            className="rounded-full object-cover border-4 border-background shadow-sm"
+          />
+        </div>
       </CardHeader>
-      <CardContent className="p-6">
-        <CardTitle className="text-lg">{doctor.name}</CardTitle>
-        <p className="text-primary font-medium mt-1">{doctor.specialty}</p>
-        <div className="flex items-center justify-center my-3 text-sm">
-          <Star className="text-yellow-400 fill-current" size={16} />
-          <span className="ml-2 text-foreground font-semibold">
-            {doctor.rating}
-          </span>
-          <span className="ml-2 text-muted-foreground">
+
+      <CardContent className="text-center px-6 pb-4">
+        <CardTitle className="text-xl font-semibold text-foreground">
+          {doctor.name}
+        </CardTitle>
+        <p className="text-sm text-primary font-medium mt-1">
+          {doctor.specialty}
+        </p>
+
+        <div className="flex items-center justify-center mt-3 space-x-1 text-sm">
+          <Star className="text-yellow-400 fill-yellow-400" size={16} />
+          <span className="font-semibold text-foreground">{doctor.rating}</span>
+          <span className="text-muted-foreground">
             ({doctor.reviews} reviews)
           </span>
         </div>
       </CardContent>
-      <CardFooter className="grid grid-cols-2 gap-2 p-4 pt-0">
-        <Button variant="outline">View Profile</Button>
-        <Button>Book Now</Button>
+
+      <CardFooter className="flex justify-center gap-3 p-5 pt-0 border-t border-border/40">
+        <Button
+          variant="outline"
+          className="rounded-lg text-sm px-4 py-2 hover:bg-muted transition-colors"
+        >
+          View Profile
+        </Button>
+        <Button className="rounded-lg text-sm px-4 py-2">Book Now</Button>
       </CardFooter>
     </Card>
   );
