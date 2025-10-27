@@ -12,13 +12,13 @@ const PublicNavbar = () => {
     { href: "#", label: "NGOs" },
   ];
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur  dark:bg-background/95">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur dark:bg-background/95">
+      <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-primary">Duc Doc</span>
+          <span className="text-2xl font-bold text-primary">Duc Doc</span>
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center space-x-6 font-medium">
           {navItems.map((link) => (
             <Link
               key={link.label}
