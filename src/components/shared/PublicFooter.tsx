@@ -6,7 +6,7 @@ function PublicFooter() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-bold text-2xl mb-2">Duc Doc</h3>
+            <h3 className="font-bold text-2xl mb-2">Medora</h3>
             <p className="text-sm text-muted-foreground">
               Your health is our priority. We are here to provide the best
               medical services.
