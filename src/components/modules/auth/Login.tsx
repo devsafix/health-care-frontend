@@ -27,6 +27,7 @@ import {
 import { useRouter } from "next/navigation";
 import loginUser from "@/utility/login";
 import checkAuthStatus from "@/utility/auth";
+import { UseUser } from "@/providers/UserProvider";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -43,6 +44,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const { setUser } = UseUser();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -65,6 +67,9 @@ export default function Login() {
       const res = await loginUser(data.email, data.password);
       if (res.success) {
         const authStatus = await checkAuthStatus();
+
+        setUser(authStatus.user);
+
         if (authStatus.isAuthenticated && authStatus.user) {
           const { role } = authStatus.user;
           switch (role) {
