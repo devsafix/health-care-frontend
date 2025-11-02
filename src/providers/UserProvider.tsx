@@ -7,6 +7,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 interface UserContextInterface {
   user: UserInterface | null;
   setUser: React.Dispatch<React.SetStateAction<UserInterface | null>>;
+  loading: boolean;
 }
 
 const UserContext = createContext<UserContextInterface | undefined>(undefined);
@@ -27,6 +28,7 @@ export const UserProvider = ({
   children: React.ReactNode;
 }) => {
   const [user, setUser] = useState<UserInterface | null>(initialUser ?? null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const revalidateUser = async () => {
@@ -35,15 +37,16 @@ export const UserProvider = ({
         setUser(res.user);
       } catch {
         setUser(null);
+      } finally {
+        setLoading(false);
       }
     };
-    if (!user) {
-      revalidateUser();
-    }
-  }, [user]);
+
+    revalidateUser();
+  }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, loading }}>
       {children}
     </UserContext.Provider>
   );

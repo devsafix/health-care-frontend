@@ -4,28 +4,13 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
-import checkAuthStatus from "@/utility/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { UseUser } from "@/providers/UserProvider";
 
 const PublicNavbar = () => {
-  const [role, setRole] = useState("guest");
-  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    async function fetchUser() {
-      const { user } = await checkAuthStatus();
-      setRole(user?.role || "guest");
-    }
-    fetchUser();
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const { user } = UseUser();
+  const role = user?.role || "guest";
 
   const navItems = [
     { href: "#", label: "Consultation" },
@@ -39,13 +24,7 @@ const PublicNavbar = () => {
   }
 
   return (
-    <header 
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        scrolled 
-          ? "bg-background/80 backdrop-blur-xl border-b shadow-lg dark:shadow-blue-900/20" 
-          : "bg-background/95 backdrop-blur-sm border-b"
-      }`}
-    >
+    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-background/80 backdrop-blur-xl border-b shadow-lg dark:shadow-blue-900/20">
       <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2 group">
@@ -74,7 +53,7 @@ const PublicNavbar = () => {
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center space-x-3">
           {role !== "guest" ? (
-            <Button 
+            <Button
               variant="destructive"
               className="rounded-lg font-semibold hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg"
             >
@@ -83,7 +62,9 @@ const PublicNavbar = () => {
           ) : (
             <Link href="/login">
               <Button className="rounded-lg font-semibold hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg group">
-                <span className="transition-all duration-300 group-hover:tracking-wide">Login</span>
+                <span className="transition-all duration-300 group-hover:tracking-wide">
+                  Login
+                </span>
               </Button>
             </Link>
           )}
@@ -93,20 +74,20 @@ const PublicNavbar = () => {
         <div className="md:hidden">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="icon"
                 className="rounded-lg border-2 hover:border-primary dark:hover:border-primary hover:scale-110 transition-all duration-300"
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent 
-              side="right" 
+            <SheetContent
+              side="right"
               className="w-[300px] sm:w-[400px] p-6 bg-background/95 backdrop-blur-xl border-l-2"
             >
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              
+
               {/* Mobile Logo */}
               <div className="mb-8">
                 <span className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
@@ -122,29 +103,35 @@ const PublicNavbar = () => {
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-lg font-medium px-4 py-3 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 transition-all duration-300 hover:translate-x-2 border border-transparent hover:border-primary/30 opacity-0 animate-slide-in"
-                    style={{ 
+                    style={{
                       animationDelay: `${index * 100}ms`,
-                      animationFillMode: "forwards"
+                      animationFillMode: "forwards",
                     }}
                   >
                     {link.label}
                   </Link>
                 ))}
-                
+
                 {/* Mobile Auth Button */}
                 <div className="border-t border-border pt-6 mt-4">
                   {role !== "guest" ? (
-                    <Button 
-                      variant="destructive" 
+                    <Button
+                      variant="destructive"
                       className="w-full rounded-lg font-semibold hover:scale-105 transition-transform duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Logout
                     </Button>
                   ) : (
-                    <Link href="/login" className="block" onClick={() => setMobileMenuOpen(false)}>
+                    <Link
+                      href="/login"
+                      className="block"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       <Button className="w-full rounded-lg font-semibold hover:scale-105 transition-transform duration-300 group">
-                        <span className="transition-all duration-300 group-hover:tracking-wide">Login</span>
+                        <span className="transition-all duration-300 group-hover:tracking-wide">
+                          Login
+                        </span>
                       </Button>
                     </Link>
                   )}
