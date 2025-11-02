@@ -1,6 +1,12 @@
 "use client";
 
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react";
+import {
+  IconCirclePlusFilled,
+  IconMail,
+  IconSettings,
+  IconUsers,
+  type Icon,
+} from "@tabler/icons-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { UseUser } from "@/providers/UserProvider";
 
 export function NavMain({
   items,
@@ -21,6 +28,25 @@ export function NavMain({
     icon?: Icon;
   }[];
 }) {
+  const { user } = UseUser();
+
+  const role = user?.role || "guest";
+
+  if (role === "ADMIN") {
+    items.push(
+      {
+        title: "Manage Doctors",
+        url: "/dashboard/admin/manage-doctors",
+        icon: IconSettings,
+      },
+      {
+        title: "Manage Patients",
+        url: "/dashboard/admin/manage-patients",
+        icon: IconUsers,
+      }
+    );
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
