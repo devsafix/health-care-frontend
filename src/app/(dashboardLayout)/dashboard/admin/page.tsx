@@ -1,6 +1,6 @@
 import DashboardComponent from "@/components/modules/dashboard/Dashboard";
 
-export default function DashboardPage() {
+export default function AdminDashboardPage() {
   return (
     <div>
       <DashboardComponent />
