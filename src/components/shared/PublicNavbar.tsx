@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { UseUser } from "@/providers/UserProvider";
+import { logOutUser } from "@/utility/logOut";
 
 const PublicNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -56,6 +57,9 @@ const PublicNavbar = () => {
             <Button
               variant="destructive"
               className="rounded-lg font-semibold hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg"
+              onClick={() => {
+                logOutUser();
+              }}
             >
               Logout
             </Button>
