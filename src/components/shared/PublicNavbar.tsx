@@ -5,13 +5,10 @@ import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { UseUser } from "@/providers/UserProvider";
 import { logOutUser } from "@/utility/logOut";
 
 const PublicNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user } = UseUser();
-  const role = user?.role || "guest";
 
   const navItems = [
     { href: "#", label: "Consultation" },
@@ -19,10 +16,7 @@ const PublicNavbar = () => {
     { href: "#", label: "Medicine" },
     { href: "#", label: "Diagnostics" },
   ];
-
-  if (role === "ADMIN") {
-    navItems.push({ href: "/dashboard/admin", label: "Dashboard" });
-  }
+  const role = "guest";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -51,13 +45,15 @@ const PublicNavbar = () => {
             <Button
               variant="outline"
               onClick={() => logOutUser()}
-              className="text-sm font-medium"
+              className="text-sm font-medium cursor-pointer"
             >
               Logout
             </Button>
           ) : (
             <Link href="/login">
-              <Button className="text-sm font-medium">Login</Button>
+              <Button className="text-sm font-medium cursor-pointer">
+                Login
+              </Button>
             </Link>
           )}
         </div>
