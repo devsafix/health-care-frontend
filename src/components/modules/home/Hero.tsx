@@ -56,8 +56,11 @@ export function Hero({
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-background">
-      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:py-28">
+    <section className="relative w-full overflow-hidden bg-background group">
+      {/* Animated Background Effect */}
+      <div className="absolute inset-0 bg-linear-to-br from-primary/15 via-blue-500/5 to-transparent opacity-80 transition-opacity duration-500" />
+
+      <div className="mx-auto max-w-7xl px-4 py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <motion.div
