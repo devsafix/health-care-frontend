@@ -23,7 +23,7 @@ const LoginForm = () => {
       return null;
     }
   };
-  console.log(state);
+
   return (
     <form action={formAction}>
       <FieldGroup>
