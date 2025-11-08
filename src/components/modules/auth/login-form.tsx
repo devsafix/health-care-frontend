@@ -14,6 +14,7 @@ import { loginUser } from "@/services/auth/loginUser";
 
 const LoginForm = () => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
+  console.log(state, "state");
 
   const getFieldError = (fieldName: string) => {
     if (state && state.errors) {
@@ -63,7 +64,7 @@ const LoginForm = () => {
             )}
           </Field>
         </div>
-        <FieldGroup className="mt-4">
+        <FieldGroup>
           <Field>
             <Button type="submit" disabled={isPending}>
               {isPending ? "Logging in..." : "Login"}

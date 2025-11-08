@@ -11,7 +11,7 @@ const RegisterPage = () => {
   return (
     <>
       <div className="flex py-20 md:py-32 items-center justify-center">
-        <div className="max-w-md space-y-6 rounded-lg border shadow-lg">
+        <div className="max-w-md w-full space-y-6 rounded-lg border shadow-lg">
           <Card>
             <CardHeader>
               <CardTitle>Create an account</CardTitle>
