@@ -14,18 +14,19 @@ export async function proxy(request: NextRequest) {
   const cookieStore = await cookies();
   const pathname = request.nextUrl.pathname;
 
-  const accessToken = request.cookies.get("accessToken")?.value || null;
+  const accessTokenHealthCare = request.cookies.get("accessTokenHealthCare")?.value || null;
 
   let userRole: UserRole | null = null;
-  if (accessToken) {
+
+  if (accessTokenHealthCare) {
     const verifiedToken: JwtPayload | string = jwt.verify(
-      accessToken,
+      accessTokenHealthCare,
       process.env.ACCESS_TOKEN_SECRET as string
     );
 
     if (typeof verifiedToken === "string") {
-      cookieStore.delete("accessToken");
-      cookieStore.delete("refreshToken");
+      cookieStore.delete("accessTokenHealthCare");
+      cookieStore.delete("refreshTokenHealthCare");
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
@@ -40,7 +41,7 @@ export async function proxy(request: NextRequest) {
   const isAuth = isAuthRoute(pathname);
 
   // Rule 1 : User is logged in and trying to access auth route. Redirect to default dashboard
-  if (accessToken && isAuth) {
+  if (accessTokenHealthCare && isAuth) {
     return NextResponse.redirect(
       new URL(getDefaultDashboardRoute(userRole as UserRole), request.url)
     );
@@ -53,7 +54,7 @@ export async function proxy(request: NextRequest) {
 
   // Rule 1 & 2 for open public routes and auth routes
 
-  if (!accessToken) {
+  if (!accessTokenHealthCare) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);

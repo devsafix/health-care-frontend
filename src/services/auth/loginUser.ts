@@ -9,7 +9,6 @@ import {
   UserRole,
 } from "@/lib/auth-utils";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { redirect } from "next/navigation";
 
 const loginValidationZodSchema = z.object({
   email: z.email({
@@ -62,6 +61,16 @@ export const loginUser = async (
       },
     });
 
+    // 💡 ADDED: Handle API errors (like wrong password)
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        error:
+          errorData.message || "Login failed. Please check your credentials.",
+      };
+    }
+
     const setCookieHeader = res.headers.getSetCookie();
 
     if (setCookieHeader && setCookieHeader.length > 0) {
@@ -89,26 +98,34 @@ export const loginUser = async (
 
     const cookieStore = await cookies();
 
-    cookieStore.set("accessToken", accessTokenObject.accessTokenHealthCare, {
-      secure: true,
-      httpOnly: true,
-      maxAge: parseInt(accessTokenObject["Max-Age"]) || 1000 * 60 * 60,
-      path: accessTokenObject.Path || "/",
-      sameSite: accessTokenObject["SameSite"] || "none",
-    });
+    cookieStore.set(
+      "accessTokenHealthCare",
+      accessTokenObject.accessTokenHealthCare,
+      {
+        secure: true,
+        httpOnly: true,
+        maxAge: parseInt(accessTokenObject["Max-Age"]) || 1000 * 60 * 60,
+        path: accessTokenObject.Path || "/",
+        sameSite: accessTokenObject["SameSite"] || "none",
+      }
+    );
 
-    cookieStore.set("refreshToken", refreshTokenObject.refreshTokenHealthCare, {
-      secure: true,
-      httpOnly: true,
-      maxAge:
-        parseInt(refreshTokenObject["Max-Age"]) || 1000 * 60 * 60 * 24 * 90,
-      path: refreshTokenObject.Path || "/",
-      sameSite: refreshTokenObject["SameSite"] || "none",
-    });
+    cookieStore.set(
+      "refreshTokenHealthCare",
+      refreshTokenObject.refreshTokenHealthCare,
+      {
+        secure: true,
+        httpOnly: true,
+        maxAge:
+          parseInt(refreshTokenObject["Max-Age"]) || 1000 * 60 * 60 * 24 * 90,
+        path: refreshTokenObject.Path || "/",
+        sameSite: refreshTokenObject["SameSite"] || "none",
+      }
+    );
 
     const verifiedToken: JwtPayload | string = jwt.verify(
       accessTokenObject.accessTokenHealthCare,
-      process.env.JWT_SECRET as string
+      process.env.ACCESS_TOKEN_SECRET as string
     );
 
     console.log(verifiedToken, "verifiedToken");
@@ -118,20 +135,30 @@ export const loginUser = async (
     }
 
     const userRole: UserRole = verifiedToken.role;
+    let finalRedirectPath: string;
 
     if (redirectTo) {
       const requestedPath = redirectTo.toString();
       if (isValidRedirectForRole(requestedPath, userRole)) {
-        redirect(requestedPath);
+        finalRedirectPath = requestedPath;
       } else {
-        redirect(getDefaultDashboardRoute(userRole));
+        finalRedirectPath = getDefaultDashboardRoute(userRole);
       }
+    } else {
+      // 💡 ADDED: Ensure a path is always set
+      finalRedirectPath = getDefaultDashboardRoute(userRole);
     }
+
+    return {
+      success: true,
+      message: "Login successful!",
+      redirectTo: finalRedirectPath,
+    };
   } catch (error: any) {
-    // Re-throw NEXT_REDIRECT errors so Next.js can handle them
-    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
-      throw error;
-    }
-    return { error: "Login failed" };
+    console.error("Login Action Error:", error.message);
+    return {
+      success: false,
+      error: "An unexpected error occurred. Please try again.",
+    };
   }
 };
