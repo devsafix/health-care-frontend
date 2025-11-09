@@ -3,6 +3,13 @@
 import z from "zod";
 import { parse } from "cookie";
 import { cookies } from "next/headers";
+import {
+  getDefaultDashboardRoute,
+  isValidRedirectForRole,
+  UserRole,
+} from "@/lib/auth-utils";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { redirect } from "next/navigation";
 
 const loginValidationZodSchema = z.object({
   email: z.email({
@@ -23,6 +30,8 @@ export const loginUser = async (
   formData: any
 ): Promise<any> => {
   try {
+    const redirectTo = formData.get("redirect") || null;
+
     let accessTokenObject: null | any = null;
     let refreshTokenObject: null | any = null;
 
@@ -53,7 +62,6 @@ export const loginUser = async (
       },
     });
 
-    const result = await res.json();
     const setCookieHeader = res.headers.getSetCookie();
 
     if (setCookieHeader && setCookieHeader.length > 0) {
@@ -98,9 +106,32 @@ export const loginUser = async (
       sameSite: refreshTokenObject["SameSite"] || "none",
     });
 
-    return result;
-  } catch (error) {
-    console.log(error);
+    const verifiedToken: JwtPayload | string = jwt.verify(
+      accessTokenObject.accessTokenHealthCare,
+      process.env.JWT_SECRET as string
+    );
+
+    console.log(verifiedToken, "verifiedToken");
+
+    if (typeof verifiedToken === "string") {
+      throw new Error("Invalid token");
+    }
+
+    const userRole: UserRole = verifiedToken.role;
+
+    if (redirectTo) {
+      const requestedPath = redirectTo.toString();
+      if (isValidRedirectForRole(requestedPath, userRole)) {
+        redirect(requestedPath);
+      } else {
+        redirect(getDefaultDashboardRoute(userRole));
+      }
+    }
+  } catch (error: any) {
+    // Re-throw NEXT_REDIRECT errors so Next.js can handle them
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     return { error: "Login failed" };
   }
 };

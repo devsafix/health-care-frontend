@@ -13,7 +13,6 @@ import { useActionState } from "react";
 
 const RegisterForm = () => {
   const [state, formAction, isPending] = useActionState(registerPatient, null);
-  console.log(state, "state");
 
   const getFieldError = (fieldName: string) => {
     if (state && state.errors) {
