@@ -11,16 +11,20 @@ import { Input } from "@/components/ui/input";
 import { registerPatient } from "@/services/auth/registerPatient";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 const RegisterForm = () => {
   const [state, formAction, isPending] = useActionState(registerPatient, null);
 
-  const router = useRouter(); 
+  const router = useRouter();
 
-  // 💡 ADDED: This effect listens for the successful login state
   useEffect(() => {
     if (state?.success && state?.redirectTo) {
       router.push(state.redirectTo);
+    }
+
+    if (state && !state.success && state.error) {
+      toast.error(state.message);
     }
   }, [state, router]);
 

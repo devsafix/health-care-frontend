@@ -12,19 +12,21 @@ import {
 } from "@/components/ui/field";
 import { loginUser } from "@/services/auth/loginUser";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
+  const router = useRouter();
 
-  const router = useRouter(); // 💡 ADDED: Initialize router
-
-  // 💡 ADDED: This effect runs when 'state' changes
   useEffect(() => {
     if (state?.success && state?.redirectTo) {
-      // On successful login, navigate the user
       router.push(state.redirectTo);
     }
-  }, [state, router]); // Dependencies: run when state or router changes
+
+    if (state && !state.success && state.error) {
+      toast.error(state.message);
+    }
+  }, [state, router]);
 
   const getFieldError = (fieldName: string) => {
     if (state && state.errors) {
