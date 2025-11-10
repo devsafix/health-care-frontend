@@ -24,7 +24,7 @@ const RegisterForm = () => {
     }
 
     if (state && !state.success && state.error) {
-      toast.error(state.message);
+      toast.error("Registration failed. Please try again.");
     }
   }, [state, router]);
 

@@ -24,7 +24,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
     }
 
     if (state && !state.success && state.error) {
-      toast.error(state.message);
+      toast.error("Login failed. Please check your credentials and try again.");
     }
   }, [state, router]);
 
@@ -40,9 +40,6 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
   return (
     <form action={formAction}>
       {redirect && <input type="hidden" name="redirect" value={redirect} />}
-      {state?.error && (
-        <p className="text-sm text-center text-red-600 mb-4">{state.error}</p>
-      )}
       <FieldGroup>
         <div className="grid grid-cols-1 gap-4">
           {/* Email */}
