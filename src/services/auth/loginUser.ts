@@ -2,13 +2,13 @@
 
 import z from "zod";
 import { parse } from "cookie";
-import { cookies } from "next/headers";
 import {
   getDefaultDashboardRoute,
   isValidRedirectForRole,
   UserRole,
 } from "@/lib/auth-utils";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { setCookie } from "./tokenHandlers";
 
 const loginValidationZodSchema = z.object({
   email: z.email({
@@ -96,9 +96,7 @@ export const loginUser = async (
       throw new Error("Tokens not found in cookies");
     }
 
-    const cookieStore = await cookies();
-
-    cookieStore.set(
+    await setCookie(
       "accessTokenHealthCare",
       accessTokenObject.accessTokenHealthCare,
       {
@@ -110,7 +108,7 @@ export const loginUser = async (
       }
     );
 
-    cookieStore.set(
+    await setCookie(
       "refreshTokenHealthCare",
       refreshTokenObject.refreshTokenHealthCare,
       {
