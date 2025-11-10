@@ -1,6 +1,7 @@
 "use server";
 
 import z from "zod";
+import { loginUser } from "./loginUser";
 
 const registerValidationZodSchema = z
   .object({
@@ -74,13 +75,25 @@ export const registerPatient = async (
         method: "POST",
         body: newFormData,
       }
-    ).then((res) => res.json());
+    );
 
-    console.log(res, "res");
+    const result = await res.json();
+   if (result.success === true) {
+      // ✅ CHANGED:
+      // Call loginUser and store its response (which is { success: true, redirectTo: "..." })
+      const loginResult = await loginUser(_currentState, formData);
+      
+      // Return the loginResult, not the original API 'result'
+      return loginResult;
+    }
 
-    return res;
-  } catch (error) {
+    return result;
+  } catch (error: any) {
     console.log(error);
+    // Re-throw NEXT_REDIRECT errors so Next.js can handle them
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     return { error: "Registration failed" };
   }
 };

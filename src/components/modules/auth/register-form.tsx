@@ -9,10 +9,20 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { registerPatient } from "@/services/auth/registerPatient";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 
 const RegisterForm = () => {
   const [state, formAction, isPending] = useActionState(registerPatient, null);
+
+  const router = useRouter(); 
+
+  // 💡 ADDED: This effect listens for the successful login state
+  useEffect(() => {
+    if (state?.success && state?.redirectTo) {
+      router.push(state.redirectTo);
+    }
+  }, [state, router]);
 
   const getFieldError = (fieldName: string) => {
     if (state && state.errors) {
@@ -26,7 +36,7 @@ const RegisterForm = () => {
       return null;
     }
   };
-  
+
   return (
     <form action={formAction}>
       <FieldGroup>
