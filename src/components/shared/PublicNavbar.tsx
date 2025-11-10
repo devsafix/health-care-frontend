@@ -1,15 +1,11 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Menu } from "lucide-react";
-import { useState } from "react";
-import { logOutUser } from "@/utility/logOut";
+import { getCookie } from "@/services/auth/tokenHandlers";
+import LogoutButton from "./LogoutButton";
 
-const PublicNavbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+const PublicNavbar = async () => {
   const navItems = [
     { href: "#", label: "Consultation" },
     { href: "#", label: "Health Plans" },
@@ -17,6 +13,8 @@ const PublicNavbar = () => {
     { href: "#", label: "Diagnostics" },
   ];
   const role = "guest";
+
+  const accessTokenHealthCare = await getCookie("accessTokenHealthCare");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -41,14 +39,8 @@ const PublicNavbar = () => {
 
         {/* Desktop Auth */}
         <div className="hidden md:flex items-center space-x-4">
-          {role !== "guest" ? (
-            <Button
-              variant="outline"
-              onClick={() => logOutUser()}
-              className="text-sm font-medium cursor-pointer"
-            >
-              Logout
-            </Button>
+          {accessTokenHealthCare ? (
+            <LogoutButton />
           ) : (
             <Link href="/login">
               <Button className="text-sm font-medium cursor-pointer">
@@ -60,7 +52,7 @@ const PublicNavbar = () => {
 
         {/* Mobile Menu */}
         <div className="md:hidden">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon">
                 <Menu className="h-5 w-5" />
@@ -80,7 +72,6 @@ const PublicNavbar = () => {
                     key={item.label}
                     href={item.href}
                     className="text-base font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
                   </Link>
@@ -90,19 +81,11 @@ const PublicNavbar = () => {
               {/* Auth Button */}
               <div className="mt-6 border-t pt-6">
                 {role !== "guest" ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full"
-                  >
+                  <Button variant="outline" className="w-full">
                     Logout
                   </Button>
                 ) : (
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block"
-                  >
+                  <Link href="/login" className="block">
                     <Button className="w-full">Login</Button>
                   </Link>
                 )}
